@@ -1,0 +1,19 @@
+# Ignore Everything. Each filetype committed should be an intentional choice.
+*
+!*/
+# ------------------------------------------------------------------------------
+!/*.md
+!/*.adoc
+!/**/.gitkeep
+!/**/.gitignore
+!/.gitattributes
+!/cspell.config.yaml
+!/.cspell/*.txt
+!/.pre-commit-config.yaml
+!/.terraform-docs.yml
+# ------------------------------------------------------------------------------
+!/*.tf
+!/modules/*/*.tf
+!/modules/*.md
+!/policies/*.hvacl
+!/tests/*.tftest.hcl
