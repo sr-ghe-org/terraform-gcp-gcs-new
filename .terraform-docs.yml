@@ -1,0 +1,73 @@
+---
+formatter: markdown table
+header-from: main.tf
+# yamllint disable rule:line-length
+content: |-
+
+  # Google Cloud Storage (GCS)
+
+  This Terraform module creates Google Cloud Storage (GCS) buckets, categorized as PCI compliant and Non-PCI compliant, leveraging the [`terraform-google-modules/cloud-storage/google`](https://github.com/terraform-google-modules/terraform-google-cloud-storage/tree/main/modules/simple_bucket) module.
+
+  ## Table of Contents
+
+  - [Overview][1]
+  - [Example Input][2]
+  - [Requirements][3]
+  - [Inputs][4]
+  - [Outputs][5]
+  - [Modules][6]
+  - [Resources][7]
+
+  ## Overview
+
+  This module simplifies the creation and management of GCS buckets, distinguishing between PCI and Non-PCI compliant buckets.  It utilizes submodules for managing each type of bucket, allowing for specific configurations.  It aims to promote security best practices, including CMEK encryption, data retention policies, and restricted access in production (though the access restriction logic needs to be implemented in the submodules).
+
+  {{ .Header }}
+
+  ## Example Input
+
+  ```terraform
+  {{- if .Module.RequiredInputs }}
+    #
+    #  REQUIRED VARIABLES
+    #
+    {{- range .Module.RequiredInputs }}
+    # TODO: update "{{ .Name }}" value
+    {{ .Name }}  = null
+    {{- end }}
+  {{- end }}
+  {{- if .Module.OptionalInputs }}
+    #
+    #  OPTIONAL VARIABLES
+    #
+    {{- range .Module.OptionalInputs }}
+    {{ .Name }}  = {{ .GetValue | printf "%s" }}
+    {{- end }}
+  {{- end }}
+  ```
+
+  {{ .Requirements }}{{"\n"}}
+  {{ .Inputs }}{{"\n"}}
+  {{ .Outputs }}{{"\n"}}
+  {{ .Modules }}{{"\n"}}
+  {{ .Resources }}{{"\n"}}
+  [1]: #overview
+  [2]: #example-input
+  [3]: #requirements
+  [4]: #inputs
+  [5]: #outputs
+  [6]: #modules
+  [7]: #resources
+
+# yamllint enable rule:line-length
+sort:
+  enabled: true
+output:
+  file: README.md
+  mode: replace
+  template: |-
+    {{ .Content }}{{"\n"}}
+settings:
+  indent: 2
+  read-comments: false
+  hide-empty: false

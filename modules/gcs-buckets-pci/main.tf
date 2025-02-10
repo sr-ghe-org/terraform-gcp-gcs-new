@@ -15,27 +15,26 @@
  */
 
 resource "google_kms_crypto_key_iam_binding" "decrypters" {
-  for_each      = { for k, v in var.kms_key_names : k => v if length(var.kms_key_names) > 0 }
-  crypto_key_id = each.value
+  count         = var.kms_key_names != "" ? 1 : 0
+  crypto_key_id = var.kms_key_names
   members       = ["serviceAccount:service-${var.project_number}@gs-project-accounts.iam.gserviceaccount.com"]
   role          = "roles/cloudkms.cryptoKeyDecrypter"
 }
 
 resource "google_kms_crypto_key_iam_binding" "encrypters" {
-  for_each      = { for k, v in var.kms_key_names : k => v if length(var.kms_key_names) > 0 }
-  crypto_key_id = each.value
+  count         = var.kms_key_names != "" ? 1 : 0
+  crypto_key_id = var.kms_key_names
   members       = ["serviceAccount:service-${var.project_number}@gs-project-accounts.iam.gserviceaccount.com"]
   role          = "roles/cloudkms.cryptoKeyEncrypter"
 }
 
 # Module to create GCS buckets in multiple regions within the same project
 module "gcs_pci_buckets" {
-  for_each                 = toset(var.regions)
   source                   = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
   version                  = "9.0"
   project_id               = var.project_id
-  name                     = "${var.bucket_name_prefix}-pci-${each.key}" # Bucket names are globally unique
-  location                 = each.value
+  name                     = "${var.bucket_name_prefix}-pci" # Bucket names are globally unique
+  location                 = var.location
   bucket_policy_only       = true           # uniform_bucket_level_access is set to true
   versioning               = var.versioning # By default set to false
   labels                   = merge(var.labels, { bucket_type = "pci" })
@@ -47,8 +46,9 @@ module "gcs_pci_buckets" {
   public_access_prevention = "enforced"             # Prevent public access is "enforced" by default
   soft_delete_policy       = var.soft_delete_policy # Set to O (By default : 604800(7 days))
   encryption = {
-    default_kms_key_name = length(var.kms_key_names) > 0 ? var.kms_key_names[each.key] : null
+    default_kms_key_name = var.kms_key_names != "" ? var.kms_key_names : null
   }
+  custom_placement_config    = var.custom_placement_config
   internal_encryption_config = var.internal_encryption_config
   iam_members                = var.iam_members
   depends_on                 = [google_kms_crypto_key_iam_binding.decrypters, google_kms_crypto_key_iam_binding.encrypters]

@@ -17,3 +17,5 @@
 !/modules/*.md
 !/policies/*.hvacl
 !/tests/*.tftest.hcl
+
+.terraform

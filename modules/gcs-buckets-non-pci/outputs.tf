@@ -16,15 +16,15 @@
 
 output "gcs_bucket_names" {
   description = "List of created GCS bucket names."
-  value       = [for bucket in module.gcs_non_pci_buckets : bucket.name]
+  value       = module.gcs_non_pci_buckets.name
 }
 
 output "gcs_bucket_urls" {
   description = "List of created GCS bucket URLs."
-  value       = [for bucket in module.gcs_non_pci_buckets : "gs://${bucket.name}"]
+  value       = "gs://${module.gcs_non_pci_buckets.name}"
 }
 
-output "regions" {
+output "location" {
   description = "List of regions where the GCS buckets are created."
-  value       = var.regions
+  value       = var.location
 }

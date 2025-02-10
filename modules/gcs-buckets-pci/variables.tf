@@ -30,12 +30,26 @@ variable "bucket_name_prefix" {
   description = "Prefix for the GCS bucket names"
 }
 
-variable "regions" {
-  type        = list(string)
+variable "bucket_policy_only" {
+  description = "Enables Bucket Policy Only access to a bucket."
+  type        = bool
+  default     = true
+}
+
+variable "custom_placement_config" {
+  description = "Configuration of the bucket's custom location in a dual-region bucket setup. If the bucket is designated a single or multi-region, the variable are null."
+  type = object({
+    data_locations = list(string)
+  })
+  default = null
+}
+
+variable "location" {
+  type        = string
   description = "List of regions for Non-PCI buckets"
   validation {
-    condition     = alltrue([for r in var.regions : r == "northamerica-northeast1" || r == "northamerica-northeast2" || r == "us-east4"])
-    error_message = "The regions list can only contain 'northamerica-northeast1', 'northamerica-northeast2', and 'us-east4'."
+    condition     = contains(["northamerica-northeast1", "northamerica-northeast2", "us-east4", "us", "ca"], lower(var.location))
+    error_message = "The locations list can only contain 'northamerica-northeast1', 'northamerica-northeast2', 'us' , 'ca' and 'us-east4'."
   }
 }
 
@@ -132,8 +146,8 @@ variable "encryption" {
 
 variable "kms_key_names" {
   description = "Map of region names to CMEK key names. The CMEK keys must already exist in the corresponding regions."
-  type        = map(string)
-  default     = {}
+  type        = string
+  default     = ""
 }
 
 variable "internal_encryption_config" {
