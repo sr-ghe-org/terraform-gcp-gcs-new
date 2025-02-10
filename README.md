@@ -3,6 +3,32 @@
 
 This Terraform module creates Google Cloud Storage (GCS) buckets, categorized as PCI compliant and Non-PCI compliant, leveraging the [`terraform-google-modules/cloud-storage/google`](https://github.com/terraform-google-modules/terraform-google-cloud-storage/tree/main/modules/simple_bucket) module.
 
+## Variables
+
+### Mandatory Variables
+- `project_id`: The GCP project ID where GCS bucket will be created.
+- `bucket_name_prefix`: Prefix for the GCS bucket names.
+- `bucket_type`:  PCI bucket or Non-PCI bucket ("pci" or "non-pci").
+- `location`: Google Cloud region for the bucket (e.g., "northamerica-northeast1"). For multi-region buckets (e.g., "us,ca").
+- `internal_encryption_config` or `kms_key_names`:  Configuration for Customer-Managed Encryption Keys (CMEK). You *must* provide one of these.
+
+
+### Optional Variables 
+- `project_number`: The GCP project number where the KMS service account exists. *Required* if using `kms_key_names`.
+- `custom_placement_config`: Configuration for dual-region buckets.
+- `iam_members`: List of IAM members to grant permissions on the bucket.
+- `versioning`: Enables versioning for the bucket. Defaults to `false`.
+- `labels`:  Labels to apply to the bucket. Defaults to `bucket_type = "pci"` or `bucket_type = "non-pci"`.
+- `storage_class`: The storage class for the bucket. Defaults to `STANDARD`.
+- `autoclass`: Enables Autoclass for the bucket. Defaults to `false`.
+- `retention_policy`: Configuration for data retention policy.
+- `soft_delete_policy`: Configuration for soft delete policy.
+- `lifecycle_rules`: List of lifecycle rules.
+- `force_destroy`:  Allows deletion of non-empty buckets. Defaults to `false`.
+- `kms_key_names`: Map of region names to CMEK key names. The keys must already exist.  *Required* if using CMEK and not using `internal_encryption_config`. Defaults to `""`
+- `internal_encryption_config` : Creation of an internal Google Cloud Key Management Service (KMS) Key for use as Customer-managed encryption key (CMEK).Defaults to `{}`
+
+
 ## Table of Contents
 
 - [Overview][1]
